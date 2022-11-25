@@ -1,0 +1,10 @@
+name: Home
+version: '${project.version}'
+main: com.dorechan.home.HomePlugin
+api-version: 1.18
+authors: [ DoremiMS ]
+
+commands:
+  home: # コマンドの名前
+    usage: "/<command> <set/tp>" # コマンドの短い説明
+    description: "HomeSet or TP" # コマンドの説明
