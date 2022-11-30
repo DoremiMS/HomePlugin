@@ -9,8 +9,10 @@ class HomePlugin: JavaPlugin() {
         val version = description.version
         logger.info("Enable $name $version")
         val homeCommand = HomeCommand(config, this)
-        getCommand("home")?.setExecutor(homeCommand)
-        getCommand("home")?.tabCompleter = homeCommand
+        getCommand("home")?.apply {
+            setExecutor(homeCommand)
+            tabCompleter = homeCommand
+        }
         saveDefaultConfig()
     }
     
