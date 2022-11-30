@@ -1,6 +1,7 @@
 package com.dorechan.home.commands
 
 import com.dorechan.home.HomePlugin
+import com.dorechan.home.exceptions.IllegalCommandException
 import org.bukkit.*
 import org.bukkit.command.*
 import org.bukkit.configuration.file.FileConfiguration
@@ -10,11 +11,15 @@ class HomeCommand(private val config: FileConfiguration, private val homePlugin:
                                                                                               TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) return false
-        when (args.getOrNull(0)) {
-            "set" ->set(args, sender)
-            "tp" ->tp(args, sender)
-            "remove"->remove(args, sender)
-            else ->return false
+        try {
+            when (args.getOrNull(0)) {
+                "set" ->set(args, sender)
+                "tp" ->tp(args, sender)
+                "remove"->remove(args, sender)
+                else ->return false
+            }
+        } catch(e: IllegalCommandException) {
+            sender.sendMessage("${ChatColor.RED}${e.message}")
         }
         return true
     }
@@ -29,7 +34,7 @@ class HomeCommand(private val config: FileConfiguration, private val homePlugin:
     
     private fun tp(args: Array<out String>, sender: Player) {
         val teleportName = args.getOrNull(1)?:"Home"
-        val homeLocation = config.getLocation("HomePlugin.${sender.uniqueId}.$teleportName")?:throw IllegalArgumentException("${ChatColor.WHITE}$teleportName is not set")
+        val homeLocation = config.getLocation("HomePlugin.${sender.uniqueId}.$teleportName")?:throw IllegalCommandException("${ChatColor.WHITE}$teleportName is not set")
         sender.teleport(homeLocation)
         sender.sendMessage("${ChatColor.WHITE}Teleporting to ${ChatColor.AQUA}$teleportName")
         sender.spawnParticle(Particle.DRAGON_BREATH, sender.location, 60, 1.0, 2.0, 1.0, 0.2)
